@@ -1,0 +1,44 @@
+softwares:
+    bwa: 'bwa'
+    picard: '/home/condivisi/softwares/picard-tools-2.3.0/picard.jar'
+    gatk: '/home/condivisi/softwares/gatk/GenomeAnalysisTK.jar'
+    convert2annovar: 'convert2annovar.pl'
+    annovar: 'annotate_variation.pl'
+    mutect: '/home/condivisi/packages/jdk/jdk1.6.0_35/bin/java -Xmx50g -jar /home/condivisi/softwares/mutect/muTect-1.1.4.jar'
+ref-files:
+    hg: '/home/condivisi/databases/humanGenome_reference/human_g1k_v37.fasta'
+    indels_ref: '/home/condivisi/databases/humanGenome_reference/Mills_and_1000G_gold_standard.indels.b37.vcf'
+    ## For IndelRealigner
+    target_realigner: '/home/condivisi/databases/humanGenome_reference/realignerTarget.intervals'
+    dbsnp: '/home/condivisi/databases/humanGenome_reference/dbsnp_138.b37.vcf'
+    hapmap: '/home/condivisi/databases/humanGenome_reference/hapmap_3.3.b37.vcf'
+    omni: '/home/condivisi/databases/humanGenome_reference/1000G_omni2.5.b37.vcf'
+    cosmic: '/home/condivisi/databases/humanGenome_reference/b37_cosmic_v54_120711.vcf'
+    ## Annovar
+    humandb: '/home/condivisi/softwares/annovar/humandb'
+    build_ver: 'hg19'
+    dbsnp_ver: 'snp138'
+    kg_ver: '1000g2012apr_all'
+    mitochondrial_ver: 'GRCh37_MT'
+sample-details:
+    target: '/home/condivisi/databases/humanGenome_reference/nexterarapidcapture_expandedexome_targetedregions_fixed.bed'
+    platform: 'illumina'
+    library: 'WES-Nextera-Rapid-Capture'
+hap-caller:
+    mode: 'DISCOVERY'
+    emit_conf: 10
+    call_conf: 30
+VQSR:
+    ## parameters to build the Variant Recalibration model for snps and indels
+    ## See GATK best practices and GATK documentation 
+    resource-hapmap: 'hapmap,known=false,training=true,truth=true,prior=15.0'
+    resource-omni: 'omni,known=false,training=true,truth=false,prior=12'
+    resource-dbsnp: 'dbsnp,known=true,training=false,truth=false,prior=2.0'
+    snp_pars: '-an DP -an QD -an FS -an MQRankSum -an ReadPosRankSum -mode SNP -tranche 100.0 -tranche 99.9 -tranche 99.0 -tranche 90.0'
+    ts_filter_level: 99
+    resource-mills: '-resource:mills,known=true,training=true,truth=true,prior=12.0'
+    indels_pars: '-an DP -an FS -an MQRankSum -an ReadPosRankSum -mode INDEL -tranche 100.0 -tranche 99.9 -tranche 99.0 -tranche 90.0 --maxGaussians 4'
+hard-filter:
+    snps: '--filterExpression "QD < 2.0 || FS > 60.0 || MQ < 40.0 || HaplotypeScore > 13.0 || MappingQualityRankSum < -12.5 || ReadPosRankSum < -8.0" --filterName "snp_hardFilter"'
+    indels: '--filterExpression "QD < 2.0 || FS > 200.0 || ReadPosRankSum < -20.0" --filterName "indel_hardFilter"'
+tmp_dir: '~/tmp'
